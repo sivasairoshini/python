@@ -1,8 +1,8 @@
-#Name: T.S.S.Roshini
+#Name: T.S.S
 #Lab:01
 #Task:01
 #Program:Valid Identifiers
-name="Roshini"
+name="xyz"
 PI=3.14
 def greet():
     print("All the best")

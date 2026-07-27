@@ -16,3 +16,5 @@ total$=5000.00
 #may-var is invalid variable because it contains a hyphen
 #MyClass is valid variable
 # total$ is inavlid variable because it contains '$' symbol
+#ouput
+#SyntaxError: invalid syntax
