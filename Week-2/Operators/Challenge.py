@@ -1,5 +1,5 @@
 #Name: T.S.S.Roshini
-#Program:Login valiadtor
+#Program:Login validator
 username="sivasairoshini"
 password=135780
 inname=input("Enter your username:\n")
