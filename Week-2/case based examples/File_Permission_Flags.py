@@ -1,10 +1,12 @@
 #Name:T.S.S.Roshini
 #Program:File Permission Flags
-Read=4;Write=2;Execute=1
-combined_flags=Read | Write
-print("Combined flags:",combined_flags)
-write_permission=combined_flags & Write
-print("Has write permission???",bool(write_permission))
+read = 4
+write = 2
+execute = 1
+permissions = read|write
+write_permission = (permissions & write) != 0
+print("Permissions:", permissions)
+print("Write permission set:", write_permission)
 #output
-#Combined flags: 6
-#Has write permission??? True
+#Permissions: 6
+#Write permission set: True
