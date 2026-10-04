@@ -1,0 +1,792 @@
+# AI in Entertainment and Gaming
+# Python Fundamentals Lab Project
+
+# List of dictionaries containing entertainment and gaming data
+items = [
+    {"title": "Interstellar", "genre": "Sci-Fi", "rating": 4.8},
+    {"title": "Inception", "genre": "Thriller", "rating": 4.7},
+    {"title": "Minecraft", "genre": "Adventure", "rating": 4.6},
+    {"title": "The Lion King", "genre": "Animation", "rating": 4.4},
+    {"title": "Avengers: Endgame", "genre": "Action", "rating": 4.2},
+    {"title": "Free Guy", "genre": "Comedy", "rating": 3.8}
+]
+
+# Filter items with rating above 4
+recommended = [item for item in items if item["rating"] > 4]
+
+# Sort the recommended items by rating
+recommended = sorted(
+    recommended,
+    key=lambda item: item["rating"],
+    reverse=True
+)
+
+
+# Function to create an HTML card
+def make_card(item):
+    if item["rating"] >= 4.5:
+        category = "Highly Recommended"
+    else:
+        category = "Recommended"
+
+    return f"""
+    <div class="card"
+         data-title="{item["title"].lower()}"
+         data-genre="{item["genre"]}"
+         data-rating="{item["rating"]}">
+
+        <div class="card-top">
+            <span class="genre">{item["genre"]}</span>
+            <span class="rating">★ {item["rating"]}</span>
+        </div>
+
+        <h3>{item["title"]}</h3>
+
+        <p>{category}</p>
+
+        <button class="details-btn"
+                type="button"
+                onclick="showDetails('{item["title"]}', '{item["genre"]}', {item["rating"]})">
+            Explore
+        </button>
+    </div>
+    """
+
+
+# Generate cards using a loop
+cards = ""
+
+for item in items:
+    cards += make_card(item)
+
+
+# Generate the HTML webpage
+html = f"""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Entertainment Hub</title>
+
+    <style>
+
+        * {{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }}
+
+        body {{
+            font-family: Arial, sans-serif;
+            background: #0f1020;
+            color: white;
+            line-height: 1.6;
+        }}
+
+        header {{
+            min-height: 420px;
+            padding: 80px 20px;
+            text-align: center;
+            background:
+                radial-gradient(circle at top left, #7c3aed, transparent 35%),
+                radial-gradient(circle at bottom right, #ec4899, transparent 35%),
+                #111326;
+        }}
+
+        .tag {{
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }}
+
+        header h1 {{
+            font-size: 52px;
+            margin-bottom: 15px;
+        }}
+
+        header h1 span {{
+            color: #d8b4fe;
+        }}
+
+        header p {{
+            max-width: 700px;
+            margin: auto;
+            color: #d1d5db;
+            font-size: 18px;
+        }}
+
+        .container {{
+            width: 90%;
+            max-width: 1100px;
+            margin: 50px auto;
+        }}
+
+        .intro {{
+            background: #18192d;
+            border: 1px solid #292b48;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }}
+
+        .intro h2 {{
+            color: #d8b4fe;
+            margin-bottom: 15px;
+        }}
+
+        .intro p {{
+            color: #c7c9d9;
+            margin-bottom: 12px;
+        }}
+
+        .section-title {{
+            text-align: center;
+            margin-bottom: 25px;
+        }}
+
+        .section-title h2 {{
+            font-size: 32px;
+        }}
+
+        .section-title p {{
+            color: #9ca3af;
+        }}
+
+        .controls {{
+            background: #18192d;
+            border: 1px solid #292b48;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 30px;
+
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }}
+
+        .controls input,
+        .controls select {{
+            padding: 13px 16px;
+            border-radius: 10px;
+            border: 1px solid #3b3d5c;
+            background: #0f1020;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }}
+
+        .controls input {{
+            width: 250px;
+        }}
+
+        .controls input:focus,
+        .controls select:focus {{
+            border-color: #a855f7;
+        }}
+
+        .recommend-btn {{
+            padding: 13px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }}
+
+        .recommend-btn:hover {{
+            transform: translateY(-2px);
+        }}
+
+        .message {{
+            display: none;
+            background: #24183b;
+            border: 1px solid #6d28d9;
+            padding: 18px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }}
+
+        .cards {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }}
+
+        .card {{
+            background: #18192d;
+            border: 1px solid #292b48;
+            border-radius: 18px;
+            padding: 22px;
+
+            transition: 0.3s;
+        }}
+
+        .card:hover {{
+            transform: translateY(-7px);
+            border-color: #8b5cf6;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }}
+
+        .card-top {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }}
+
+        .genre {{
+            background: #312e81;
+            color: #ddd6fe;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }}
+
+        .rating {{
+            color: #facc15;
+            font-weight: bold;
+        }}
+
+        .card h3 {{
+            font-size: 22px;
+            margin-bottom: 8px;
+        }}
+
+        .card p {{
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }}
+
+        .details-btn {{
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #4c1d95;
+            border-radius: 10px;
+            background: transparent;
+            color: #d8b4fe;
+            cursor: pointer;
+        }}
+
+        .details-btn:hover {{
+            background: #4c1d95;
+            color: white;
+        }}
+
+        .ai-section {{
+            margin-top: 60px;
+            background: linear-gradient(135deg, #1e1b4b, #271238);
+            border-radius: 22px;
+            padding: 35px;
+        }}
+
+        .ai-section h2 {{
+            margin-bottom: 20px;
+            color: #e9d5ff;
+        }}
+
+        .ai-list {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }}
+
+        .ai-box {{
+            background: rgba(255,255,255,0.06);
+            border-radius: 15px;
+            padding: 20px;
+        }}
+
+        .ai-box h3 {{
+            margin-bottom: 8px;
+            color: #f0abfc;
+        }}
+
+        .ai-box p {{
+            color: #d1d5db;
+        }}
+
+        .modal {{
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+        }}
+
+        .modal-content {{
+            background: #18192d;
+            border: 1px solid #4c1d95;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }}
+
+        .modal-content h2 {{
+            color: #d8b4fe;
+            margin-bottom: 15px;
+        }}
+
+        .modal-content p {{
+            color: #c7c9d9;
+            margin-bottom: 20px;
+        }}
+
+        .close-btn {{
+            padding: 10px 25px;
+            border: none;
+            border-radius: 10px;
+            background: #7c3aed;
+            color: white;
+            cursor: pointer;
+        }}
+
+        .no-results {{
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }}
+
+        footer {{
+            margin-top: 70px;
+            padding: 25px;
+            text-align: center;
+            background: #090a14;
+            color: #8f92a5;
+        }}
+
+        @media (max-width: 600px) {{
+
+            header h1 {{
+                font-size: 36px;
+            }}
+
+            header {{
+                padding: 60px 20px;
+            }}
+
+            .controls input {{
+                width: 100%;
+            }}
+
+            .controls select,
+            .recommend-btn {{
+                width: 100%;
+            }}
+        }}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="tag">✦ Powered by Python + AI Concepts</div>
+
+    <h1>Entertainment <span>& Gaming</span></h1>
+
+    <p>
+        Discover how Artificial Intelligence is transforming
+        movies, games, recommendations and digital content.
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <section class="intro">
+
+        <h2>What is AI doing here?</h2>
+
+        <p>
+            Artificial Intelligence is changing the entertainment
+            and gaming industry by understanding user preferences,
+            recommending content and creating intelligent game experiences.
+        </p>
+
+        <p>
+            This website uses Python to store, filter and sort
+            entertainment data before generating this webpage.
+        </p>
+
+    </section>
+
+
+    <section>
+
+        <div class="section-title">
+
+            <h2>Find Your Next Favourite</h2>
+
+            <p>
+                Search, filter and discover something you might enjoy.
+            </p>
+
+        </div>
+
+
+        <div class="controls">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Search movies or games..."
+            >
+
+            <select id="genreFilter">
+
+                <option value="all">All Genres</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+
+            </select>
+
+
+            <select id="ratingFilter">
+
+                <option value="0">Any Rating</option>
+                <option value="4">4+ Rating</option>
+                <option value="4.5">4.5+ Rating</option>
+
+            </select>
+
+
+            <button
+                class="recommend-btn"
+                type="button"
+                onclick="recommendForMe()"
+            >
+                ✨ Recommend for Me
+            </button>
+
+        </div>
+
+
+        <div id="recommendationMessage" class="message"></div>
+
+
+        <div class="cards" id="cardsContainer">
+
+            {cards}
+
+        </div>
+
+
+        <div id="noResults" class="no-results">
+
+            <h3>No matches found 😔</h3>
+
+            <p>Try changing your search or filters.</p>
+
+        </div>
+
+    </section>
+
+
+    <section class="ai-section">
+
+        <h2>How AI Helps Entertainment & Gaming</h2>
+
+
+        <div class="ai-list">
+
+            <div class="ai-box">
+
+                <h3>🎯 Recommendations</h3>
+
+                <p>
+                    AI studies what users like and recommends
+                    movies, music and games based on their interests.
+                </p>
+
+            </div>
+
+
+            <div class="ai-box">
+
+                <h3>🎮 Intelligent Gaming</h3>
+
+                <p>
+                    AI controls non-player characters and helps
+                    them react to player actions in games.
+                </p>
+
+            </div>
+
+
+            <div class="ai-box">
+
+                <h3>🎨 Content Creation</h3>
+
+                <p>
+                    AI can help creators produce images, audio,
+                    animation and other digital content.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+<footer>
+
+    <p>
+        Python Fundamentals Lab Project |
+        AI in Entertainment and Gaming
+    </p>
+
+</footer>
+
+
+<div class="modal" id="detailsModal">
+
+    <div class="modal-content">
+
+        <h2 id="modalTitle"></h2>
+
+        <p id="modalDetails"></p>
+
+        <button
+            class="close-btn"
+            type="button"
+            onclick="closeModal()"
+        >
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const searchInput = document.getElementById("searchInput");
+
+    const genreFilter = document.getElementById("genreFilter");
+
+    const ratingFilter = document.getElementById("ratingFilter");
+
+    const cards = document.querySelectorAll(".card");
+
+    const noResults = document.getElementById("noResults");
+
+    const recommendationMessage =
+        document.getElementById("recommendationMessage");
+
+
+    function filterCards() {{
+
+        const searchText =
+            searchInput.value.toLowerCase();
+
+        const selectedGenre =
+            genreFilter.value;
+
+        const minimumRating =
+            parseFloat(ratingFilter.value);
+
+        let visibleCards = 0;
+
+
+        cards.forEach(function(card) {{
+
+            const title =
+                card.dataset.title;
+
+            const genre =
+                card.dataset.genre;
+
+            const rating =
+                parseFloat(card.dataset.rating);
+
+
+            const matchesSearch =
+                title.includes(searchText);
+
+            const matchesGenre =
+                selectedGenre === "all" ||
+                genre === selectedGenre;
+
+            const matchesRating =
+                rating >= minimumRating;
+
+
+            if (
+                matchesSearch &&
+                matchesGenre &&
+                matchesRating
+            ) {{
+
+                card.style.display = "block";
+
+                visibleCards++;
+
+            }} else {{
+
+                card.style.display = "none";
+
+            }}
+
+        }});
+
+
+        if (visibleCards === 0) {{
+
+            noResults.style.display = "block";
+
+        }} else {{
+
+            noResults.style.display = "none";
+
+        }}
+
+    }}
+
+
+    searchInput.addEventListener(
+        "input",
+        filterCards
+    );
+
+
+    genreFilter.addEventListener(
+        "change",
+        filterCards
+    );
+
+
+    ratingFilter.addEventListener(
+        "change",
+        filterCards
+    );
+
+
+    function recommendForMe() {{
+
+        const selectedGenre =
+            genreFilter.value;
+
+        const minimumRating =
+            parseFloat(ratingFilter.value);
+
+
+        if (
+            selectedGenre === "all" &&
+            minimumRating === 0
+        ) {{
+
+            recommendationMessage.innerHTML =
+                "✨ Based on our data, we recommend <strong>Interstellar</strong> and <strong>Inception</strong> for a highly-rated experience!";
+
+        }} else if (selectedGenre !== "all") {{
+
+            recommendationMessage.innerHTML =
+                "🎯 AI suggestion: Explore the <strong>"
+                + selectedGenre
+                + "</strong> section and find something that matches your taste!";
+
+        }} else {{
+
+            recommendationMessage.innerHTML =
+                "⭐ Great choice! Showing content with ratings of <strong>"
+                + minimumRating
+                + "+</strong>.";
+
+        }}
+
+
+        recommendationMessage.style.display =
+            "block";
+
+
+        filterCards();
+
+    }}
+
+
+    function showDetails(title, genre, rating) {{
+
+        document.getElementById("modalTitle").innerText =
+            title;
+
+        document.getElementById("modalDetails").innerText =
+            "Genre: " + genre +
+            " | Rating: " + rating +
+            ". This title was selected based on the entertainment data used in this Python project.";
+
+        document.getElementById("detailsModal").style.display =
+            "flex";
+
+    }}
+
+
+    function closeModal() {{
+
+        document.getElementById("detailsModal").style.display =
+            "none";
+
+    }}
+
+
+    window.addEventListener("click", function(event) {{
+
+        const modal =
+            document.getElementById("detailsModal");
+
+        if (event.target === modal) {{
+
+            closeModal();
+
+        }}
+
+    }});
+
+</script>
+
+
+</body>
+
+</html>
+"""
+
+
+# Save the generated webpage
+with open("index.html", "w") as file:
+    file.write(html)
+
+
+print("Interactive webpage generated successfully!")
+print("Open index.html in your browser.")
